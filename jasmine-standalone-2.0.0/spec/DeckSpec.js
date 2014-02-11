@@ -23,14 +23,21 @@ describe("Deck", function() {
 	   	var deck2 = new Deck();
 	   	deck2.makeDeck();
 	   	deck2.shuffle();
-	    expect(deck.cards[0].rank).not.toEqual(deck2.cards[0].rank);
+	   	var i = 0;
+	   	for (var j = i; j < deck.size(); j++) {
+	   		if (deck.cards[i].rank == deck2.cards[i].rank && deck.cards[i].suit == deck2.cards[i].suit) {
+	   			break;
+	   		}
+	   		i++;
+	   	}
+	    expect(i).not.toEqual(52);
 	});
 
 	it("method takeTopCard should remove a card from the deck and return it.", function() {
 	   	deck.makeDeck();
 	    var card = deck.takeTopCard();
 	    expect(deck.size()).toEqual(51);
-	    expect(card.description()).toEqual("Ace of Spades");
+	    expect(card.description()).toEqual("King of Spades");
 	});
 
 });

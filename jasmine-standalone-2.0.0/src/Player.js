@@ -1,22 +1,16 @@
-function Player() {
+function Player(name) {
+	this.name = name,
+	this.hand = new Hand(),
+
+	this.handSize = function() {
+		return this.hand.size();
+	},
+
+	this.addCardsToHand = function(cards) {
+		this.hand.addCards(cards);
+	},
+
+	this.takeCardsFromHand = function(newCards) {
+		return this.hand.takeCards(newCards);
+	}
 }
-Player.prototype.play = function(song) {
-  this.currentlyPlayingSong = song;
-  this.isPlaying = true;
-};
-
-Player.prototype.pause = function() {
-  this.isPlaying = false;
-};
-
-Player.prototype.resume = function() {
-  if (this.isPlaying) {
-    throw new Error("song is already playing");
-  }
-
-  this.isPlaying = true;
-};
-
-Player.prototype.makeFavorite = function() {
-  this.currentlyPlayingSong.persistFavoriteStatus(true);
-};

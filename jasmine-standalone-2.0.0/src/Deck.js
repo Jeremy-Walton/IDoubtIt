@@ -1,6 +1,6 @@
 function Deck() {
 	this.cards = new Array(),
-	this.ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"],
+	this.ranks = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"],
 	this.suits = ["Hearts", "Diamonds", "Clubs", "Spades"],
 	
 	this.size = function() {

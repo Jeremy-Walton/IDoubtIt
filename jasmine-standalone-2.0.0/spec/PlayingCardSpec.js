@@ -11,7 +11,7 @@ describe("Playing Card", function() {
 	});
 
 	it("should have a value", function() {
-	    expect(card.value).toEqual(12);
+	    expect(card.value).toEqual(0);
 	});
 
 	it("should have a description", function() {

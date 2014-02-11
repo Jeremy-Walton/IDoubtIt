@@ -1,58 +1,36 @@
 describe("Player", function() {
   var player;
-  var song;
 
   beforeEach(function() {
-    player = new Player();
-    song = new Song();
+      player = new Player("Jeremy");
   });
 
-  it("should be able to play a Song", function() {
-    player.play(song);
-    expect(player.currentlyPlayingSong).toEqual(song);
-
-    //demonstrates use of custom matcher
-    expect(player).toBePlaying(song);
+  it("should have a name", function() {
+    expect(player.name).toEqual("Jeremy");
   });
 
-  describe("when song has been paused", function() {
-    beforeEach(function() {
-      player.play(song);
-      player.pause();
-    });
-
-    it("should indicate that the song is currently paused", function() {
-      expect(player.isPlaying).toBeFalsy();
-
-      // demonstrates use of 'not' with a custom matcher
-      expect(player).not.toBePlaying(song);
-    });
-
-    it("should be possible to resume", function() {
-      player.resume();
-      expect(player.isPlaying).toBeTruthy();
-      expect(player.currentlyPlayingSong).toEqual(song);
-    });
+  it("should have a hand", function() {
+      expect(player.hand.prototype).toEqual(new Hand().prototype);
   });
 
-  // demonstrates use of spies to intercept and test method calls
-  it("tells the current song if the user has made it a favorite", function() {
-    spyOn(song, 'persistFavoriteStatus');
-
-    player.play(song);
-    player.makeFavorite();
-
-    expect(song.persistFavoriteStatus).toHaveBeenCalledWith(true);
+  it("method handSize should return size of hand", function() {
+      expect(player.handSize()).toEqual(0);
   });
 
-  //demonstrates use of expected exceptions
-  describe("#resume", function() {
-    it("should throw an exception if song is already playing", function() {
-      player.play(song);
-
-      expect(function() {
-        player.resume();
-      }).toThrowError("song is already playing");
-    });
+  it("method addCardsToHand should add the cards you pass it to the hand", function() {
+      expect(player.handSize()).toEqual(0);
+      player.addCardsToHand([new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Hearts"), new PlayingCard("Ace", "Kings"), new PlayingCard("Ace", "Diamonds")]);
+      expect(player.handSize()).toEqual(4);
   });
+
+  it("method takeCardsFromHand should take the cards you pass it from the hand", function() {
+      expect(player.handSize()).toEqual(0);
+      player.addCardsToHand([new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Hearts"), new PlayingCard("Ace", "Kings"), new PlayingCard("Ace", "Diamonds")]);
+      expect(player.handSize()).toEqual(4);
+      var cards = player.takeCardsFromHand([new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Hearts")]);
+      expect(player.handSize()).toEqual(2);
+      expect(cards.length).toEqual(2);
+      expect(cards[0].rank).toEqual(new PlayingCard("Ace", "Spades").rank);
+  });
+
 });
