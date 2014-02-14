@@ -24,11 +24,12 @@ describe("Deck", function() {
 	   	deck2.makeDeck();
 	   	deck2.shuffle();
 	   	var i = 0;
-	   	for (var j = i; j < deck.size(); j++) {
-	   		if (deck.cards[i].rank == deck2.cards[i].rank && deck.cards[i].suit == deck2.cards[i].suit) {
-	   			break;
+	   	for (var j = 0; j < deck.size(); j++) {
+	   		if ((deck.cards[j].rank == deck2.cards[j].rank) && (deck.cards[j].suit == deck2.cards[j].suit) {
+
+	   		} else {
+	   			i++;
 	   		}
-	   		i++;
 	   	}
 	    expect(i).not.toEqual(52);
 	});

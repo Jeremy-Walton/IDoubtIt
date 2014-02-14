@@ -5,8 +5,9 @@ describe("Discard Pile", function() {
 	   	pile = new DiscardPile();
 	});
 
-	it("should have an array of cards", function() {
+	it("should have an array of cards and lastDiscard", function() {
 		expect(pile.cards.prototype).toEqual(Array().prototype);
+		expect(pile.lastDiscard.prototype).toEqual(Array().prototype);
 	});
 
 	it("method size should return cards amount", function() {
@@ -19,7 +20,7 @@ describe("Discard Pile", function() {
 	    expect(pile.lastDiscard.length).toEqual(4);
 	});
 
-	it("method addCards should add the cards you pass it", function() {
+	it("method transferCards should add the cards you pass it", function() {
 		expect(pile.size()).toEqual(0);
 	    pile.recieveNewCards("Ace", [new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Hearts"), new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Spades")]);
 	    pile.transferCards();

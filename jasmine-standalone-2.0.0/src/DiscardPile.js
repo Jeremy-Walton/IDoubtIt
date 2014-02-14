@@ -12,6 +12,7 @@ DiscardPile.prototype.transferCards = function() {
 	for (var i = 0; i < this.lastDiscard.length; i++) {
 		this.cards.push(this.lastDiscard[i]);
 	}
+	this.lastDiscard = new Array();
 }
 
 DiscardPile.prototype.recieveNewCards = function(rank, cards) {

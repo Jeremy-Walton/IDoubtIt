@@ -9,12 +9,29 @@ describe("Game", function() {
     expect(game.deck.prototype).toEqual(new Deck().prototype);
   });
 
+  it("should have a turnOrder", function() {
+    expect(game.turnOrder.prototype).toEqual(new Array().prototype);
+  });
+
   it("should have a discard pile", function() {
       expect(game.discardPile.prototype).toEqual(new DiscardPile().prototype);
   });
 
   it("should have a player array", function() {
       expect(game.players.prototype).toEqual(new Array().prototype);
+  });
+
+  it("should have a ranks array", function() {
+      expect(game.ranks).toEqual(["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"]);
+  });
+
+  it("method currentRank should return the rank", function() {
+      expect(game.currentRank()).toEqual("Ace");
+  });
+
+  it("method changeCurrentRank should change the rank", function() {
+      game.changeCurrentRank();
+      expect(game.currentRank()).toEqual("2");
   });
 
   it("method addPlayer should add a player to the player array", function() {

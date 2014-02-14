@@ -1,5 +1,6 @@
 function Hand() {
-	this.cards = new Array()
+	this.cards = new Array(),
+	this.selectedCards = new Array()
 }
 
 Hand.prototype.size = function() {
@@ -10,6 +11,7 @@ Hand.prototype.addCards = function(cards) {
 	for (var i = 0; i < cards.length; i++) {
 		this.cards.push(cards[i]);
 	}
+	this.sortCards();
 }
 
 Hand.prototype.takeCards = function(newCards) {
@@ -24,11 +26,30 @@ Hand.prototype.takeCards = function(newCards) {
 			}
 		}
 	}
+	this.sortCards();
 	return cardsToGive;
 }
 
-Hand.prototype.sortCards = function() {
+Hand.prototype.takeCardByDescription = function(newCard) {
+	var cardToGive = new Array();
 	for (var i = 0; i < this.size(); i++) {
-		
+		if (this.cards[i].description() == newCard) {
+			cardToGive.push(this.cards[i]);
+			if (i > -1) {
+				this.cards.splice(i, 1);
+			}
+		}
 	}
+	this.sortCards();
+	return cardToGive[0];
+}
+
+Hand.prototype.sortCards = function() {
+			this.cards.sort(function (a, b) {
+   			if (a.value > b.value)
+    			return 1;
+   			if (a.value < b.value)
+      			return -1;
+   			return 0;
+			});
 }

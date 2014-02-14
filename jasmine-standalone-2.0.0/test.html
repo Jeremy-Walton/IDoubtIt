@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device- width, initial-scale=1"></meta>
 
     <!-- include source files here... -->
+    <script src="jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="src/PlayingCard.js"></script>
     <script type="text/javascript" src="src/Deck.js"></script>
     <script type="text/javascript" src="src/DiscardPile.js"></script>
@@ -21,7 +22,7 @@
 
     <HEADER>
       <ul>
-        <li><a href="/">Home</a></li>
+        <li><a href="///Users/Jeremy/Documents/RoleModel%20Academy/javascript_Learning/jasmine-standalone-2.0.0/test.html?">Home</a></li>
         <li><a href="/about">About</a></li>
         <li><a href="/rules">Rules</a></li>
       </ul>
@@ -29,24 +30,29 @@
 
     <section class="Subheader">
       <p>Your Game ID:</p>
-      <h1>| Jeremy || Sam || Bill |</h1>
+      <h1></h1>
     </section>
 
     <section class="Content">
 
       <section id="Hand">
         <h3>Your Cards</h3>
-        <ul></ul>
+        <ul id="cards"></ul>
+        <h3>Selected Cards</h3>
+        <ul id="selected"></ul>
       </section>
 
       <section id="Books">
         <h3>The Discard Pile</h3>
-        <ul></ul>
+        <h6>Ace</h6>
+        <ul id="Pile"></ul>
+        <h3>Most Recently Played Cards.</h3>
+        <ul id="Staged"></ul>
       </section>
 
       <section id="Interface">
         <h3>What are you going to do?</h3>
-        <p>Form or other text here</p>
+        <p><span id="play">Play Cards</span>  <span id="cancel">Cancel</span></p>
       </section>
 
       <section id="Results">
