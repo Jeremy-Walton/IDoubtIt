@@ -60,7 +60,7 @@ GameView.prototype.displayInterface = function(player) {
 	var Interface = $("#Interface").find("p");
 	if(this.game.whosTurn() != this.game.players[player].name) {
 		Interface.empty();
-		Interface.html('<span id="Doubt">I doubt it!</span>');
+		Interface.html('<span id="doubt">I doubt it!</span>');
 	} else {
 		Interface.empty();
 		Interface.html('<span id="play">Play Cards</span>  <span id="cancel">Cancel</span>');
@@ -68,7 +68,7 @@ GameView.prototype.displayInterface = function(player) {
 }
 
 GameView.prototype.refreshPage = function(player) {
-	$("#Books").find("h6").text(this.game.currentRank());
+	$("#Books").find("h6").text("Current rank: "+this.game.currentRank());
 	this.displayInterface(player);
 	this.displayHand(player);
 	this.displayPlayers();
@@ -123,7 +123,7 @@ GameView.prototype.robotTurn = function(player) {
 	var results = $("#Results").find("p");
 	results.text("Robot played " + cardsToPlay.length + " " + this.game.currentRank() + "'s");
 	this.game.changeCurrentRank();
-	view.game.discardPile.transferCards();
+	this.game.discardPile.transferCards();
 	this.refreshPage(0);
 }
 
@@ -142,7 +142,7 @@ $(document).ready(function () {
 		}
 	});
 
-	$("#Interface").on('click', '#Doubt', function() {
+	$("#Interface").on('click', '#doubt', function() {
 		view.pressIDoubtIt(0);
 	});
 
@@ -174,6 +174,38 @@ $(document).ready(function () {
 				view.refreshPage(0);
 			}, 10000);
 		}
+	});
+
+	$("#Interface").on('mouseenter', '#play', function() {
+		$(this).addClass('Hover');
+	});
+
+	$("#Interface").on('mouseleave', '#play', function() {
+		$(this).removeAttr('class');
+	});
+
+	$("#Interface").on('mouseenter', '#cancel', function() {
+		$(this).addClass('Hover');
+	});
+
+	$("#Interface").on('mouseleave', '#cancel', function() {
+		$(this).removeAttr('class');
+	});
+
+	$("#Interface").on('mouseenter', '#doubt', function() {
+		$(this).addClass('Hover');
+	});
+
+	$("#Interface").on('mouseleave', '#doubt', function() {
+		$(this).removeAttr('class');
+	});
+
+	$("#Hand").find("#cards").on('mouseenter', 'li', function() {
+		$(this).attr('id', 'Highlight');
+	});
+
+	$("#Hand").find("#cards").on('mouseleave', 'li', function() {
+		$(this).removeAttr('id');
 	});
 
 	$("#Interface").on('click', '#cancel', function() {
