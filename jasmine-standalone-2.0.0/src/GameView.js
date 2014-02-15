@@ -2,8 +2,6 @@ function GameView() {
 	this.game = new Game()
 }
 
-// Get rid of last discard section. Not necesarry.
-
 GameView.prototype.setup = function() {
 	this.game.addPlayer("Jeremy");
 	this.game.addPlayer("Sam");
@@ -47,15 +45,6 @@ GameView.prototype.selectCard = function(player, card) {
 	this.game.players[player].hand.selectedCards.push(card);
 }
 
-GameView.prototype.displayStagedCards = function(player) {
-	var discards = $("#Books").find("#Staged");
-	discards.empty();
-	for (var i = 0; i < this.game.discardPile.lastDiscard.length; i++) {
-		var card = this.game.discardPile.lastDiscard[i];
-		discards.append('<li class="' + card.description() + '"><img src="../jasmine-standalone-2.0.0/cards/backs_blue.png"></li>');
-	}
-}
-
 GameView.prototype.displayInterface = function(player) {
 	var Interface = $("#Interface").find("p");
 	if(this.game.whosTurn() != this.game.players[player].name) {
@@ -74,7 +63,8 @@ GameView.prototype.refreshPage = function(player) {
 	this.displayPlayers();
 	this.displayHand(player);
 	this.displaySelectedCards(player);
-	this.displayStagedCards(player);
+	this.displayDiscardPile();
+	this.displayGameInfo();
 }
 
 GameView.prototype.robotPressIDoubtIt = function(player) {
@@ -127,6 +117,40 @@ GameView.prototype.robotTurn = function(player) {
 	this.refreshPage(0);
 }
 
+GameView.prototype.checkWinCondition = function() {
+	var Interface = $("#Interface").find("p");
+	var results = $("#Results").find("p");
+	this.game.players.forEach(function(player) {
+		if (player.handSize() <= 0) {
+			results.text(player.name + " Won!");
+			Interface.empty();
+			Interface.html('<span>' + player.name + " Won!" + '</span>');
+		}
+	});
+}
+
+GameView.prototype.displayDiscardPile = function() {
+	var pile = $("#Books").find("#Pile");
+	if (this.game.discardPile.size() > 0) {
+		pile.empty();
+		var img = '<img src="../jasmine-standalone-2.0.0/cards/backs_blue.png">';
+		var li = '<li class="">' + img + '</li>';
+		pile.append(li);
+	} else {
+		pile.empty();
+	}
+}
+
+GameView.prototype.displayGameInfo = function() {
+	var info = $("#Opponent_Info").find("ul");
+	info.empty();
+	var stuff = "";
+	this.game.players.forEach(function(player) {
+		stuff += "<li>" + player.name + " cards: " + (player.handSize() + player.hand.selectedCards.length) + "</li>";
+	});
+	info.append(stuff);
+}
+
 $(document).ready(function () {
   var view = new GameView();
 	view.setup();
@@ -159,20 +183,27 @@ $(document).ready(function () {
 			view.game.players[0].hand.selectedCards = [];
 			view.game.changeCurrentRank();
 			if(view.robotWaitForDoubts(1)) {
-				view.game.discardPile.transferCards();
 				view.robotPressIDoubtIt(1);
-			} else {
-				view.game.discardPile.transferCards();
 			}
 			view.game.changeTurnOrder();
 			view.refreshPage(0);
 			setTimeout(function() {
 				view.robotTurn(1);
+				view.checkWinCondition();
 			}, 1000);
 			setTimeout(function() {
 				view.game.changeTurnOrder();
+				view.checkWinCondition();
 				view.refreshPage(0);
-			}, 10000);
+			}, 5000);
+		}
+	});
+
+	$("#Interface").on('click', '#cancel', function() {
+		if (view.game.players[0].hand.selectedCards.length > 0) {
+			view.game.players[0].addCardsToHand(view.game.players[0].hand.selectedCards);
+			view.game.players[0].hand.selectedCards = [];
+			view.refreshPage(0);
 		}
 	});
 
@@ -206,13 +237,5 @@ $(document).ready(function () {
 
 	$("#Hand").find("#cards").on('mouseleave', 'li', function() {
 		$(this).removeAttr('id');
-	});
-
-	$("#Interface").on('click', '#cancel', function() {
-		if (view.game.players[0].hand.selectedCards.length > 0) {
-			view.game.players[0].addCardsToHand(view.game.players[0].hand.selectedCards);
-			view.game.players[0].hand.selectedCards = [];
-			view.refreshPage(0);
-		}
 	});
 });

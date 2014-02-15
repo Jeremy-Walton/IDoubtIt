@@ -1,18 +1,10 @@
 function DiscardPile() {
 	this.cards = new Array(),
-	this.lastDiscard = new Array(),
 	this.isDiscardPure = true
 }
 
 DiscardPile.prototype.size = function() {
 	return this.cards.length
-}
-
-DiscardPile.prototype.transferCards = function() {
-	for (var i = 0; i < this.lastDiscard.length; i++) {
-		this.cards.push(this.lastDiscard[i]);
-	}
-	this.lastDiscard = new Array();
 }
 
 DiscardPile.prototype.recieveNewCards = function(rank, cards) {
@@ -23,7 +15,7 @@ DiscardPile.prototype.recieveNewCards = function(rank, cards) {
 		}
 	}
 	for (var i = 0; i < cards.length; i++) {
-		this.lastDiscard.push(cards[i]);
+		this.cards.push(cards[i]);
 	}
 }
 
