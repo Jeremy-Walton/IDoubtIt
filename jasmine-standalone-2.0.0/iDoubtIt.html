@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Jeremy's page</title>
+    <link rel="stylesheet" href="stylesheets/sass_go_fish.css"></link>
+    <meta name="viewport" content="width=device- width, initial-scale=1"></meta>
+
+    <!-- include source files here... -->
+    <script src="jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="src/PlayingCard.js"></script>
+    <script type="text/javascript" src="src/Deck.js"></script>
+    <script type="text/javascript" src="src/DiscardPile.js"></script>
+    <script type="text/javascript" src="src/Hand.js"></script>
+    <script type="text/javascript" src="src/Player.js"></script>
+    <script type="text/javascript" src="src/Game.js"></script>
+
+    <script type="text/javascript" src="src/GameView.js"></script>
+
+  </head>
+
+  <body>
+
+    <HEADER>
+      <ul>
+        <li><a href="///Users/Jeremy/Documents/RoleModel%20Academy/javascript_Learning/jasmine-standalone-2.0.0/iDoubtIt.html?">Home</a></li>
+        <li><a href="///Users/Jeremy/Documents/RoleModel%20Academy/javascript_Learning/jasmine-standalone-2.0.0/iDoubtIt.html?">About</a></li>
+        <li><a href="///Users/Jeremy/Documents/RoleModel%20Academy/javascript_Learning/jasmine-standalone-2.0.0/iDoubtIt.html?">Rules</a></li>
+      </ul>
+    </HEADER>
+
+    <section class="Subheader">
+      <p>Welcome to I Doubt It. Lie at your own risk!</p>
+      <h1></h1>
+    </section>
+
+    <section class="Content">
+
+      <section id="Hand">
+        <h3>Your Cards</h3>
+        <ul id="cards"></ul>
+        <h3>Selected Cards</h3>
+        <ul id="selected"></ul>
+      </section>
+
+      <section id="Books">
+        <h3>The Discard Pile</h3>
+        <h6>Ace</h6>
+        <h5>Pile</h5>
+        <ul id="Pile"></ul>
+      </section>
+
+      <section id="Interface">
+        <h3>What are you going to do?</h3>
+        <p><span id="play">Play Cards</span>  <span id="cancel">Cancel</span></p>
+      </section>
+
+      <section id="Results">
+        <h3>Last turn</h3>
+        <p>Take your turn</p>
+      </section>
+
+      <section id="Opponent_Info">
+        <h3>Opponent Info</h3>
+        <ul></ul>
+      </section>
+
+    </section>
+
+    <FOOTER>
+      <p>Jeremy Walton 2/12/2014</p>
+    </FOOTER>
+
+  </body>
+</html>

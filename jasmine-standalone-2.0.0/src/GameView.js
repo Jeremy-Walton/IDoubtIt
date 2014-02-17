@@ -238,4 +238,12 @@ $(document).ready(function () {
 	$("#Hand").find("#cards").on('mouseleave', 'li', function() {
 		$(this).removeAttr('id');
 	});
+
+	$("header").on('mouseenter', 'li', function() {
+		$(this).addClass('Links');
+	});
+
+	$("header").on('mouseleave', 'li', function() {
+		$(this).removeAttr('class');
+	});
 });
