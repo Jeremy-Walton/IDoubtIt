@@ -76,4 +76,11 @@ describe("Game", function() {
       expect(game.players[2].handSize()).toEqual(18);
   });
 
+  it("should create a game just like the first by round-tripping JSON", function() {
+      var aceJSON = JSON.stringify(game);
+      var fromJSON = game.fromJSON(aceJSON);
+      expect(game.deck.prototype).toEqual(fromJSON.deck.prototype);
+      expect(fromJSON.__proto__).toEqual(game.__proto__);
+  });
+
 });

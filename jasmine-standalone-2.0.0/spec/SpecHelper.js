@@ -1,15 +1,10 @@
-beforeEach(function () {
-  jasmine.addMatchers({
-    toBePlaying: function () {
-      return {
-        compare: function (actual, expected) {
-          var player = actual;
+Object.prototype.toJSON = function(){
+  this.className = this.constructor.name;
+  return this;
+}
 
-          return {
-            pass: player.currentlyPlayingSong === expected && player.isPlaying
-          }
-        }
-      };
-    }
-  });
-});
+Object.prototype.fromJSON = function(json){
+  var object = JSON.parse(json);
+  object.__proto__ = window[object.className].prototype;
+  return object;
+}

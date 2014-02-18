@@ -25,10 +25,9 @@ describe("Deck", function() {
 	   	deck2.shuffle();
 	   	var i = 0;
 	   	for (var j = 0; j < deck.size(); j++) {
-	   		if ((deck.cards[j].rank == deck2.cards[j].rank) && (deck.cards[j].suit == deck2.cards[j].suit) {
-
-	   		} else {
+	   		if ((deck.cards[j].rank == deck2.cards[j].rank) && (deck.cards[j].suit == deck2.cards[j].suit)) {
 	   			i++;
+	   		} else {
 	   		}
 	   	}
 	    expect(i).not.toEqual(52);
@@ -40,5 +39,12 @@ describe("Deck", function() {
 	    expect(deck.size()).toEqual(51);
 	    expect(card.description()).toEqual("King of Spades");
 	});
+
+	it("should create a deck just like the first by round-tripping JSON", function() {
+      var aceJSON = JSON.stringify(deck);
+      var fromJSON = deck.fromJSON(aceJSON);
+      expect(deck.cards.prototype).toEqual(fromJSON.cards.prototype);
+      expect(fromJSON.__proto__).toEqual(deck.__proto__);
+ 	 });
 
 });

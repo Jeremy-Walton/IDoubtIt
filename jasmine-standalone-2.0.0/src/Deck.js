@@ -9,9 +9,9 @@ Deck.prototype.size = function() {
 }
 
 Deck.prototype.makeDeck = function() {
-	for (var rank in this.ranks) {
-		for (var suit in this.suits) {
-			this.cards.push(new PlayingCard(this.ranks[rank], this.suits[suit]));
+	for (var i = 0; i < this.ranks.length; i++) {
+		for (var j = 0; j < this.suits.length; j++) {
+			this.cards.push(new PlayingCard(this.ranks[i], this.suits[j]));
 		}
 	}
 }

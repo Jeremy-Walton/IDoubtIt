@@ -28,4 +28,11 @@ describe("Discard Pile", function() {
 	    expect(cards[0].rank).toEqual(new PlayingCard("Ace", "Spades").rank);
 	});
 
+	it("should create a discard pile just like the first by round-tripping JSON", function() {
+      var aceJSON = JSON.stringify(pile);
+      var fromJSON = pile.fromJSON(aceJSON);
+      expect(pile.cards.prototype).toEqual(fromJSON.cards.prototype);
+      expect(fromJSON.__proto__).toEqual(pile.__proto__);
+ 	 });
+
 });

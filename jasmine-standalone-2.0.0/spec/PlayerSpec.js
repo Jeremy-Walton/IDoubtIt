@@ -33,4 +33,11 @@ describe("Player", function() {
       expect(cards[0].rank).toEqual(new PlayingCard("Ace", "Spades").rank);
   });
 
+  it("should create a player just like the first by round-tripping JSON", function() {
+      var aceJSON = JSON.stringify(player);
+      var fromJSON = player.fromJSON(aceJSON);
+      expect(player.hand.prototype).toEqual(fromJSON.hand.prototype);
+      expect(fromJSON.__proto__).toEqual(player.__proto__);
+  });
+
 });

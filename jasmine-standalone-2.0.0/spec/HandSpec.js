@@ -45,4 +45,11 @@ describe("Hand", function() {
 
 	});
 
+	it("should create a hand just like the first by round-tripping JSON", function() {
+      var aceJSON = JSON.stringify(hand);
+      var fromJSON = hand.fromJSON(aceJSON);
+      expect(hand.cards.prototype).toEqual(fromJSON.cards.prototype);
+      expect(fromJSON.__proto__).toEqual(hand.__proto__);
+  });
+
 });

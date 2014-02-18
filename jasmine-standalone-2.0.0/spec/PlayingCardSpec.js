@@ -18,4 +18,13 @@ describe("Playing Card", function() {
 	    expect(card.description()).toEqual("Ace of Spades");
 	});
 
+	it("should create a card just like the first by round-tripping JSON", function() {
+	    var aceJSON = JSON.stringify(card);
+	    var fromJSON = card.fromJSON(aceJSON);
+	    expect(fromJSON.rank).toEqual(card.rank);
+	    expect(fromJSON.suit).toEqual(card.suit);
+	    expect(fromJSON.value).toEqual(card.value);
+	    expect(fromJSON.__proto__).toEqual(card.__proto__);
+	});
+
 });
