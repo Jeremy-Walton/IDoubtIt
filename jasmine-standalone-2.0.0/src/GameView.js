@@ -33,7 +33,6 @@ function gameView($scope, $timeout) {
 		}
 	}
 
-	//Needs work
 	$scope.play = function() {
 		if ($scope.game.players[0].hand.selectedCards.length > 0) {
 			$scope.result = $scope.game.whosTurn() + " played " + $scope.game.players[0].hand.selectedCards.length + " " + $scope.game.currentRank() + "'s";
@@ -49,15 +48,17 @@ function gameView($scope, $timeout) {
 			}
 			$scope.game.changeTurnOrder();
 			refreshHand($scope);
-			robotTurn($scope);
-			console.log($scope.game.currentRank());
-			checkWinCondition($scope);
+
+			$timeout(function() {
+				robotTurn($scope);
+				checkWinCondition($scope);
+			}, 1000);
 
 			$timeout(function() {
 				$scope.game.changeTurnOrder();
 				checkWinCondition($scope);
 				refreshHand($scope);
-			}, 5000)
+			}, 5000);
 		}
 	}
 
@@ -142,10 +143,10 @@ function refreshHand($scope) {
 	$scope.players = [];
 	$scope.selectedCards = [];
 	for (var i = 0; i < $scope.game.players[0].handSize(); i++){
-		$scope.cards.push({'imageUrl': '../jasmine-standalone-2.0.0/cards/' + $scope.game.players[0].hand.cards[i].description() + '.png', 'class': $scope.game.players[0].hand.cards[i].description()});
+		$scope.cards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.cards[i].description() + ".png", 'class': $scope.game.players[0].hand.cards[i].description()});
 	}
 	for (var i = 0; i < $scope.game.players[0].hand.selectedCards.length; i++){
-		$scope.selectedCards.push({'imageUrl': '../jasmine-standalone-2.0.0/cards/' + $scope.game.players[0].hand.selectedCards[i].description() + '.png', 'class': $scope.game.players[0].hand.selectedCards[i].description()});
+		$scope.selectedCards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.selectedCards[i].description() + ".png", 'class': $scope.game.players[0].hand.selectedCards[i].description()});
 	}
 	for (var i = 0; i < $scope.game.players.length; i++){
 		$scope.players.push({'name': $scope.game.players[i].name, 'cards': $scope.game.players[i].handSize()});
