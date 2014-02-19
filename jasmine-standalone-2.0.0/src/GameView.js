@@ -34,26 +34,7 @@ function gameView($scope, $timeout) {
     	}
     }
 
-    $scope.loadGame = function() {
-    	var id = prompt("Enter the name of the game you would like to load.");
-    	if(id){
-    		var properties = { 
-    		'type':"game",
-			'name':id
-		 	}; 
-	    	client.getEntity(properties, function (error, result) { 
-				if (error) { 
-		  			alert("failed"); 
-				} else { 
-		  			//success
-		  			var object = Object.fromJSON(result);
-		  			console.log(object);
-				} 
-			});
-    	}
-    }
-
-	$scope.refreshHand = function() {
+    $scope.refreshHand = function() {
 		$scope.cards = [];
 		$scope.players = [];
 		$scope.selectedCards = [];
@@ -67,6 +48,29 @@ function gameView($scope, $timeout) {
 			$scope.players.push({'name': $scope.game.players[i].name, 'cards': $scope.game.players[i].handSize()});
 		}
 	}
+
+    $scope.loadGame = function() {
+    	var id = prompt("Enter the name of the game you would like to load.");
+    	if(id){
+    		var properties = { 
+    		'type':"game",
+			'name':id
+		 	}; 
+	    	client.getEntity(properties, function (error, result) { 
+				if (error) { 
+		  			alert("failed"); 
+				} else { 
+		  			//success
+		  			var object = Object.toObject(result._data.game);
+		  			console.log(object);
+		  			$scope.game = object;
+		  			//need to update game state.
+		  			$scope.refreshHand();
+		  			$scope.$apply();
+				} 
+			});
+    	}
+    }
 
 	$scope.refreshHand();
 	
