@@ -4,6 +4,71 @@ function gameView($scope, $timeout) {
 	$scope.game.addPlayer("Sam");
 	$scope.game.setup();
 	$scope.result = "Take your turn!";
+
+	 var client = new Apigee.Client({
+          orgName:'jeremy-walton',
+          appName:'idoubtit'
+      });
+
+	 client.login("Guest","Abc123abc");
+
+	 var my_games = new Apigee.Collection( { "client":client, "type":"game" } );
+
+    $scope.saveGame = function() {
+    	var name = prompt("Please name your game. Note, if you use spaces in the game name, you won't be able to reload it");
+    	if(name) {
+    		var options = {
+          type:'game',
+          name:name,
+          game:$scope.game
+      	};
+
+	    client.createEntity(options, function (error, response) { 
+		    if (error) { // Error - the book was not saved properly
+		    	alert("Could not create the book. Did you enter your orgName (username) correctly on line 18 of index.html?");
+		    } else {
+		    	// alert(JSON.stringify(response.get()));
+		    	alert("Game saved");
+		    }
+	    });
+    	}
+    }
+
+    $scope.loadGame = function() {
+    	var id = prompt("Enter the name of the game you would like to load.");
+    	if(id){
+    		var properties = { 
+    		'type':"game",
+			'name':id
+		 	}; 
+	    	client.getEntity(properties, function (error, result) { 
+				if (error) { 
+		  			alert("failed"); 
+				} else { 
+		  			//success
+		  			var object = Object.fromJSON(result);
+		  			console.log(object);
+				} 
+			});
+    	}
+    }
+
+	$scope.refreshHand = function() {
+		$scope.cards = [];
+		$scope.players = [];
+		$scope.selectedCards = [];
+		for (var i = 0; i < $scope.game.players[0].handSize(); i++){
+			$scope.cards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.cards[i].description() + ".png", 'class': $scope.game.players[0].hand.cards[i].description()});
+		}
+		for (var i = 0; i < $scope.game.players[0].hand.selectedCards.length; i++){
+			$scope.selectedCards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.selectedCards[i].description() + ".png", 'class': $scope.game.players[0].hand.selectedCards[i].description()});
+		}
+		for (var i = 0; i < $scope.game.players.length; i++){
+			$scope.players.push({'name': $scope.game.players[i].name, 'cards': $scope.game.players[i].handSize()});
+		}
+	}
+
+	$scope.refreshHand();
 	
 	$scope.playerNames = function() {
 		var playerNames = "";
@@ -13,7 +78,18 @@ function gameView($scope, $timeout) {
 		return playerNames;
 	}
 
-	refreshHand($scope);
+	$scope.discardPile = function() {
+		if ($scope.game.discardPile.size() > 0) {
+			return "cards/backs_blue.png";
+		} else {
+			return "cards/Blank.png";
+		}
+	}
+
+	$scope.playerTurn = function() {
+		return $scope.game.whosTurn();
+	}
+
 
 	$scope.cardSelect = function(card) {
 		if ($scope.game.whosTurn() == $scope.game.players[0].name) {
@@ -22,14 +98,14 @@ function gameView($scope, $timeout) {
 				$scope.game.players[0].hand.selectedCards.push($scope.game.players[0].hand.takeCardByDescription(index));
 			}
 		}
-		refreshHand($scope);
+		$scope.refreshHand();
 	}
 
 	$scope.cancel = function() {
 		if ($scope.game.players[0].hand.selectedCards.length > 0) {
 			$scope.game.players[0].addCardsToHand($scope.game.players[0].hand.selectedCards);
 			$scope.game.players[0].hand.selectedCards = [];
-			refreshHand($scope);
+			$scope.refreshHand();
 		}
 	}
 
@@ -43,21 +119,21 @@ function gameView($scope, $timeout) {
 			$scope.game.discardPile.recieveNewCards($scope.game.currentRank(), playedCards);
 			$scope.game.players[0].hand.selectedCards = [];
 			$scope.game.changeCurrentRank();
-			if(robotWaitForDoubts()) {
-				robotPressIDoubtIt($scope);
+			if($scope.robotWaitForDoubts()) {
+				$scope.robotPressIDoubtIt();
 			}
 			$scope.game.changeTurnOrder();
-			refreshHand($scope);
+			$scope.refreshHand();
 
 			$timeout(function() {
-				robotTurn($scope);
-				checkWinCondition($scope);
+				$scope.robotTurn();
+				$scope.checkWinCondition();
 			}, 1000);
 
 			$timeout(function() {
 				$scope.game.changeTurnOrder();
-				checkWinCondition($scope);
-				refreshHand($scope);
+				$scope.checkWinCondition();
+				$scope.refreshHand();
 			}, 5000);
 		}
 	}
@@ -82,73 +158,50 @@ function gameView($scope, $timeout) {
 		return $scope.result;
 	}
 
-}
+	//All methods after this do not directly change the display. They change the game and the above methods update the view.
 
-function checkWinCondition($scope) {
-	$scope.game.players.forEach(function(player) {
-		if (player.handSize() <= 0) {
-			$scope.result = player.name + " Won!";
-		}
-	});
-}
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
-
-function robotTurn($scope) {
-	var randomIndex = 0;
-	var description = '';
-	var card = '';
-	var cardsToPlay = new Array();
-	for (var i = 0; i < 4; i++) {
-		randomIndex = Math.floor(Math.random() * $scope.game.players[1].handSize());
-		description = $scope.game.players[1].hand.cards[randomIndex].description();
-		card = $scope.game.players[1].hand.takeCardByDescription(description);
-		cardsToPlay.push(card);
+	$scope.checkWinCondition = function() {
+		$scope.game.players.forEach(function(player) {
+			if (player.handSize() <= 0) {
+				$scope.result = player.name + " Won!";
+			}
+		});
 	}
-	$scope.game.discardPile.recieveNewCards($scope.game.currentRank, cardsToPlay);
-	$scope.result = "Robot played " + cardsToPlay.length + " " + $scope.game.currentRank() + "'s";
-	$scope.game.changeCurrentRank();
-	console.log($scope.game.currentRank());
-	refreshHand($scope);
-}
 
-function robotWaitForDoubts() {
-	for (var i = 0; i < 20; i++) {
-		var chance = Math.floor(Math.random() * 100);
-		if(chance < 5) {
-			return true;
+	$scope.robotTurn = function() {
+		var randomIndex = 0;
+		var description = '';
+		var card = '';
+		var cardsToPlay = new Array();
+		for (var i = 0; i < 4; i++) {
+			randomIndex = Math.floor(Math.random() * $scope.game.players[1].handSize());
+			description = $scope.game.players[1].hand.cards[randomIndex].description();
+			card = $scope.game.players[1].hand.takeCardByDescription(description);
+			cardsToPlay.push(card);
+		}
+		$scope.game.discardPile.recieveNewCards($scope.game.currentRank, cardsToPlay);
+		$scope.result = "Robot played " + cardsToPlay.length + " " + $scope.game.currentRank() + "'s";
+		$scope.game.changeCurrentRank();
+		$scope.refreshHand();
+	}
+	
+	$scope.robotWaitForDoubts = function() {
+		for (var i = 0; i < 20; i++) {
+			var chance = Math.floor(Math.random() * 100);
+			if(chance < 5) {
+				return true;
+			}
 		}
 	}
-}
 
-function robotPressIDoubtIt($scope) {
-	if ($scope.game.discardPile.isDiscardPure) {
-		$scope.result = "Robot called I doubt it and was wrong. He picked up the discard pile.";
-		$scope.game.players[1].addCardsToHand($scope.game.discardPile.takeCards());
-	} else {
-		$scope.result = "Robot called I doubt it and was Right. You picked up the discard pile.";
-		$scope.game.players[0].addCardsToHand($scope.game.discardPile.takeCards());
+	$scope.robotPressIDoubtIt = function() {
+		if ($scope.game.discardPile.isDiscardPure) {
+			$scope.result = "Robot called I doubt it and was wrong. He picked up the discard pile.";
+			$scope.game.players[1].addCardsToHand($scope.game.discardPile.takeCards());
+		} else {
+			$scope.result = "Robot called I doubt it and was Right. You picked up the discard pile.";
+			$scope.game.players[0].addCardsToHand($scope.game.discardPile.takeCards());
+		}
 	}
-}
 
-function refreshHand($scope) {
-	$scope.cards = [];
-	$scope.players = [];
-	$scope.selectedCards = [];
-	for (var i = 0; i < $scope.game.players[0].handSize(); i++){
-		$scope.cards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.cards[i].description() + ".png", 'class': $scope.game.players[0].hand.cards[i].description()});
-	}
-	for (var i = 0; i < $scope.game.players[0].hand.selectedCards.length; i++){
-		$scope.selectedCards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.selectedCards[i].description() + ".png", 'class': $scope.game.players[0].hand.selectedCards[i].description()});
-	}
-	for (var i = 0; i < $scope.game.players.length; i++){
-		$scope.players.push({'name': $scope.game.players[i].name, 'cards': $scope.game.players[i].handSize()});
-	}
 }

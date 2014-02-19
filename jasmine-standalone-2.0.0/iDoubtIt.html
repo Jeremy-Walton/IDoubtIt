@@ -14,6 +14,7 @@
     <script type="text/javascript" src="src/Player.js"></script>
     <script type="text/javascript" src="src/Game.js"></script>
     <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="../apigee-javascript-sdk-2.0.5/lib/apigee.min.js"></script>
 
     <script type="text/javascript" src="src/GameView.js"></script>
 
@@ -26,12 +27,15 @@
         <li class="Links"><a href="///Users/Jeremy/Documents/RoleModel%20Academy/javascript_Learning/jasmine-standalone-2.0.0/iDoubtIt.html?">Home</a></li>
         <li class="Links"><a href="///Users/Jeremy/Documents/RoleModel%20Academy/javascript_Learning/jasmine-standalone-2.0.0/iDoubtIt.html?">About</a></li>
         <li class="Links"><a href="///Users/Jeremy/Documents/RoleModel%20Academy/javascript_Learning/jasmine-standalone-2.0.0/iDoubtIt.html?">Rules</a></li>
+        <li class="Links" ng-click="saveGame()">Save Game</li>
+        <li class="Links" ng-click="loadGame()">Load Game</li>
       </ul>
     </HEADER>
 
     <section class="Subheader">
       <p>Welcome to I Doubt It. Lie at your own risk!</p>
       <h1>{{playerNames()}}</h1>
+      <h1>{{playerTurn()}}'s turn</h1>
     </section>
 
     <section class="Content">
@@ -55,7 +59,7 @@
         <h3>The Discard Pile</h3>
         <h6>{{currentRank()}}</h6>
         <h5>Pile</h5>
-        <ul id="Pile"></ul>
+        <ul><li><img ng-src="{{discardPile()}}"></li></ul>
       </section>
 
       <section id="Interface">
