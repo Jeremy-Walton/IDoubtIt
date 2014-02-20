@@ -1,10 +1,16 @@
 function Hand() {
-	this.cards = new Array(),
-	this.selectedCards = new Array()
+	this.cards = new Array()
+	// this.selectedCards = new Array()
 }
 
 Hand.prototype.size = function() {
 	return this.cards.length
+}
+
+Hand.prototype.selectedCards = function () {
+	return this.cards.filter(function (card) {
+		return card.selected === true;
+	});
 }
 
 Hand.prototype.addCards = function(cards) {

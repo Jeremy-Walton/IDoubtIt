@@ -44,14 +44,14 @@
       <section id="Hand">
         <h3>Your Cards</h3>
         <ul id="cards">
-          <li ng-repeat="card in cards">
-            <img ng-src="{{card.imageUrl}}" ng-click="cardSelect(card)" class="Highlight">
+          <li ng-repeat="card in unselectedCards(cards)">
+            <img ng-src="cards/{{card.description()}}.png" ng-click="cardSelect(card)" class="Highlight" />
           </li>
         </ul>
         <h3>Selected Cards</h3>
         <ul id="selected">
-          <li ng-repeat="card in selectedCards">
-            <img ng-src="{{card.imageUrl}}">
+          <li ng-repeat="card in selectedCards(cards)">
+            <img ng-src="cards/{{card.description()}}.png" />
           </li>
         </ul>
       </section>
@@ -76,9 +76,8 @@
       <section id="Opponent_Info">
         <h3>Opponent Info</h3>
         <ul>
-          <li ng-repeat="player in players">
-            {{player.name}}: {{player.cards}}
-          </li>
+          <li>{{game.players[0].name}}: {{cards.length}}</li>
+          <li>{{game.players[1].name}}: {{game.players[1].handSize()}}</li>
         </ul>
       </section>
 
