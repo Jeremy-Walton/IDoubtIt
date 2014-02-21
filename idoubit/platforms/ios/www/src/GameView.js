@@ -10,38 +10,87 @@ function gameView($scope, $timeout) {
           appName:'idoubtit'
       });
 
-      var options = {
-          type:'game',
-          game:$scope.game
-      };
+	// var user = prompt("Enter your Username");
+	// var pass = prompt("Enter your Password");
+	// client.login(user,pass);
+	client.login("Guest", "Abc123abc");
+
+	$scope.newGame = function() {
+		$scope.game = new Game();
+		$scope.game.addPlayer("Jeremy");
+		$scope.game.addPlayer("Sam");
+		$scope.game.setup();
+		$scope.result = "Take your turn!";
+		$scope.cards = $scope.game.players[0].hand.cards;
+	}
 
     $scope.saveGame = function() {
+    	var name = prompt("Please name your game. Note, if you use spaces in the game name, you won't be able to reload it");
+    	if(name) {
+    		var options = {
+          type:'game',
+          name:name,
+          game:$scope.game
+      	};
+
 	    client.createEntity(options, function (error, response) { 
-		    if (error) { // Error - the book was not saved properly
+		    if (error) {
 		    	alert("Could not create the book. Did you enter your orgName (username) correctly on line 18 of index.html?");
 		    } else {
-		    	// alert(JSON.stringify(response.get()));
 		    	alert("Game saved");
 		    }
 	    });
+    	}
     }
 
-	$scope.refreshHand = function() {
-		$scope.cards = [];
-		$scope.players = [];
-		$scope.selectedCards = [];
-		for (var i = 0; i < $scope.game.players[0].handSize(); i++){
-			$scope.cards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.cards[i].description() + ".png", 'class': $scope.game.players[0].hand.cards[i].description()});
-		}
-		for (var i = 0; i < $scope.game.players[0].hand.selectedCards.length; i++){
-			$scope.selectedCards.push({'imageUrl': "cards/" + $scope.game.players[0].hand.selectedCards[i].description() + ".png", 'class': $scope.game.players[0].hand.selectedCards[i].description()});
-		}
-		for (var i = 0; i < $scope.game.players.length; i++){
-			$scope.players.push({'name': $scope.game.players[i].name, 'cards': $scope.game.players[i].handSize()});
-		}
+    $scope.saveLocal = function() {
+    	localStorage.setItem("localSave", JSON.stringify($scope.game));
+    	// alert("Game saved to local storage.");
+    }
+
+    $scope.loadLocal = function() {
+    	if(localStorage.getItem("localSave")){
+    		var gameData = localStorage.getItem("localSave");
+    		gameData = Object.fromJSON(gameData);
+    		$scope.game = gameData;
+    		$scope.cards = $scope.game.players[0].hand.cards;
+    	}
+    }
+    if(localStorage.getItem("localSave")){
+		$scope.loadLocal();
 	}
 
-	$scope.refreshHand();
+    $scope.cards = $scope.game.players[0].hand.cards;
+    $scope.unselectedCards = function (cards) {
+    	return cards.filter(function (card) {
+    		return !card.selected;
+    	});
+    }
+    $scope.selectedCards = function (cards) {
+    	return cards.filter(function (card) {
+    		return card.selected;
+    	});
+    }
+
+    $scope.loadGame = function() {
+    	var id = prompt("Enter the name of the game you would like to load.");
+    	if(id){
+    		var properties = { 
+    		'type':"game",
+			'name':id
+		 	}; 
+	    	client.getEntity(properties, function (error, result) { 
+				if (error) { 
+		  			alert("Failed to load game. Either you didn't log in or you entered a name that doesn't exist."); 
+				} else { 
+		  			var object = Object.toObject(result._data.game);
+		  			$scope.game = object;
+		  			$scope.cards = $scope.game.players[0].hand.cards;
+		  			$scope.$apply();
+				} 
+			});
+    	}
+    }
 	
 	$scope.playerNames = function() {
 		var playerNames = "";
@@ -66,37 +115,34 @@ function gameView($scope, $timeout) {
 
 	$scope.cardSelect = function(card) {
 		if ($scope.game.whosTurn() == $scope.game.players[0].name) {
-			if ($scope.game.players[0].hand.selectedCards.length < 4) {
-				var index = card.class;
-				$scope.game.players[0].hand.selectedCards.push($scope.game.players[0].hand.takeCardByDescription(index));
+			if ($scope.selectedCards($scope.cards).length < 4) {
+				card.selected = true;
 			}
 		}
-		$scope.refreshHand();
 	}
 
 	$scope.cancel = function() {
-		if ($scope.game.players[0].hand.selectedCards.length > 0) {
-			$scope.game.players[0].addCardsToHand($scope.game.players[0].hand.selectedCards);
-			$scope.game.players[0].hand.selectedCards = [];
-			$scope.refreshHand();
-		}
+		$scope.cards.forEach(function (card) {
+			card.selected = false;
+		});
 	}
 
 	$scope.play = function() {
-		if ($scope.game.players[0].hand.selectedCards.length > 0) {
-			$scope.result = $scope.game.whosTurn() + " played " + $scope.game.players[0].hand.selectedCards.length + " " + $scope.game.currentRank() + "'s";
-			var playedCards = new Array();
-			for (var i = 0; i < $scope.game.players[0].hand.selectedCards.length; i++) {
-				playedCards.push($scope.game.players[0].hand.selectedCards[i]);
-			}
-			$scope.game.discardPile.recieveNewCards($scope.game.currentRank(), playedCards);
-			$scope.game.players[0].hand.selectedCards = [];
+		if ($scope.selectedCards($scope.cards).length > 0) {
+			$scope.result = $scope.game.whosTurn() + " played " + $scope.game.players[0].hand.selectedCards().length + " " + $scope.game.currentRank() + "'s";
+			var selectedCards = $scope.selectedCards($scope.cards)
+			selectedCards.forEach(function (card) {
+				var cards = $scope.cards;
+				card.selected = false;
+				cards.splice(cards.indexOf(card), 1);
+				$scope.cards = cards;
+			});
+			$scope.game.discardPile.recieveNewCards($scope.game.currentRank(), selectedCards);
 			$scope.game.changeCurrentRank();
 			if($scope.robotWaitForDoubts()) {
 				$scope.robotPressIDoubtIt();
 			}
 			$scope.game.changeTurnOrder();
-			$scope.refreshHand();
 
 			$timeout(function() {
 				$scope.robotTurn();
@@ -106,7 +152,7 @@ function gameView($scope, $timeout) {
 			$timeout(function() {
 				$scope.game.changeTurnOrder();
 				$scope.checkWinCondition();
-				$scope.refreshHand();
+				$scope.saveLocal();
 			}, 5000);
 		}
 	}
@@ -155,7 +201,7 @@ function gameView($scope, $timeout) {
 		$scope.game.discardPile.recieveNewCards($scope.game.currentRank, cardsToPlay);
 		$scope.result = "Robot played " + cardsToPlay.length + " " + $scope.game.currentRank() + "'s";
 		$scope.game.changeCurrentRank();
-		$scope.refreshHand();
+		// refreshHand();
 	}
 	
 	$scope.robotWaitForDoubts = function() {
