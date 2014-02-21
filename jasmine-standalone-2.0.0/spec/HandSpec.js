@@ -7,7 +7,6 @@ describe("Hand", function() {
 
 	it("should have an array of cards and an array of selected cards", function() {
 		expect(hand.cards.prototype).toEqual(Array().prototype);
-		expect(hand.selectedCards.prototype).toEqual(Array().prototype);
 	});
 
 	it("method size should return cards amount", function() {
@@ -19,6 +18,16 @@ describe("Hand", function() {
 	    hand.addCards([new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Hearts")]);
 	    hand.addCards([new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Hearts")]);
 	    expect(hand.size()).toEqual(4);
+	});
+
+	it("method selectedCards should return cards that are selected.", function() {
+	    var card1 = new PlayingCard("Ace", "Spades");
+	    card1.selected = true;
+	    hand.addCards([card1, card1]);
+	    hand.addCards([new PlayingCard("Ace", "Spades"), new PlayingCard("Ace", "Hearts")]);
+	    expect(hand.size()).toEqual(4);
+	    var selectedCards = hand.selectedCards();
+	    expect(selectedCards.length).toEqual(2);
 	});
 
 	it("method takeCards should take the cards you provided out of the hand", function() {

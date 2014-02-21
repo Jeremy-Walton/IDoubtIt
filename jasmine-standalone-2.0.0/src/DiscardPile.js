@@ -15,7 +15,6 @@ DiscardPile.prototype.recieveNewCards = function(rank, cards) {
 		}
 	}
 	for (var i = 0; i < cards.length; i++) {
-		// cards[i].selected = false;
 		this.cards.push(cards[i]);
 	}
 }

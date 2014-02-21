@@ -14,6 +14,12 @@ describe("Playing Card", function() {
 	    expect(card.value).toEqual(0);
 	});
 
+	it("should be selected or not.", function() {
+	    expect(card.selected).toEqual(false);
+	    card.selected = true;
+	    expect(card.selected).toEqual(true);
+	});
+
 	it("should have a description", function() {
 	    expect(card.description()).toEqual("Ace of Spades");
 	});
